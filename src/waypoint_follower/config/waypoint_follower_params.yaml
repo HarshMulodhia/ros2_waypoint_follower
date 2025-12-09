@@ -1,0 +1,45 @@
+waypoint_follower:
+  ros__parameters:
+    # Control parameters
+    controller_frequency: 50.0       # Hz
+    max_steering_angle: 0.5          # radians
+    max_linear_velocity: 1.5         # m/s
+    goal_tolerance: 0.1              # meters
+
+    # PID gains for steering control
+    steering_pid:
+      kp: 1.0
+      ki: 0.1
+      kd: 0.5
+
+    # PID gains for velocity control
+    velocity_pid:
+      kp: 0.5
+      ki: 0.05
+      kd: 0.1
+
+    # Path tracking parameters
+    path_tracking:
+      lookahead_distance: 0.5
+      interpolation_distance: 0.1
+
+    # Kalman filter tuning
+    kalman_filter:
+      dt: 0.02
+      process_noise: 0.01
+      measurement_noise: 0.1
+      initial_covariance: 0.1
+
+    # Trajectory smoothing
+    trajectory_smoother:
+      max_curvature: 0.5
+      smoothing_enabled: true
+
+    # Waypoint file
+    waypoints_file: "config/waypoints_sample.yaml"
+
+    # Publisher topics
+    publisher_config:
+      cmd_vel_topic: "cmd_vel"
+      odom_fused_topic: "odometry/fused"
+      path_viz_topic: "path_visualization"

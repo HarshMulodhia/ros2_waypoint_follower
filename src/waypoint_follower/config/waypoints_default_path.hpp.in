@@ -1,0 +1,4 @@
+#pragma once
+#include <string>
+
+static const std::string WAYPOINTS_DEFAULT_PATH = @WAYPOINTS_DEFAULT_PATH_ESCAPED@;

@@ -1,0 +1,204 @@
+###############################################################################
+# Path Tracking Control Parameters
+# Tuned for differential drive robots with Waypoint Follower
+# Last Updated: December 2025
+###############################################################################
+
+path_tracking:
+  # Control Loop Configuration
+  control_loop:
+    frequency: 50.0              # Control frequency in Hz
+    period_ms: 20                # Control period in milliseconds (1000/frequency)
+    watchdog_timeout: 1.0        # Watchdog timeout in seconds
+
+  # Steering Control (PID for heading angle)
+  steering_pid:
+    enabled: true
+    kp: 1.2                      # Proportional gain
+    ki: 0.08                     # Integral gain
+    kd: 0.4                      # Derivative gain
+    
+    # Anti-windup
+    integral_max: 0.5            # Maximum integral term
+    integral_min: -0.5           # Minimum integral term
+    
+    # Output limits
+    output_max: 0.5              # Max steering command (radians)
+    output_min: -0.5             # Min steering command (radians)
+    
+    # Tuning parameters
+    error_threshold: 0.01        # Minimum error to apply control
+    derivative_filter: 0.95      # Low-pass filter for derivative term
+    
+    # Performance metrics
+    steady_state_error: 0.05     # Target steady-state error (radians)
+    rise_time_target: 0.2        # Target rise time (seconds)
+    overshoot_max: 5.0           # Maximum overshoot (percent)
+
+  # Velocity Control (PID for linear velocity)
+  velocity_pid:
+    enabled: true
+    kp: 0.6                      # Proportional gain
+    ki: 0.04                     # Integral gain
+    kd: 0.12                     # Derivative gain
+    
+    # Anti-windup
+    integral_max: 1.5            # Maximum integral term
+    integral_min: -1.5           # Minimum integral term
+    
+    # Output limits
+    output_max: 1.5              # Max velocity command (m/s)
+    output_min: 0.0              # Min velocity command (m/s) - no reverse
+    
+    # Tuning parameters
+    error_threshold: 0.01        # Minimum error to apply control
+    derivative_filter: 0.9       # Low-pass filter for derivative term
+    
+    # Performance metrics
+    steady_state_error: 0.05     # Target steady-state error (m/s)
+    rise_time_target: 0.3        # Target rise time (seconds)
+    settling_time_target: 0.5    # Target settling time (seconds)
+
+  # Path Tracking Strategy
+  path_tracking:
+    method: "pure_pursuit"       # pure_pursuit or stanley
+    
+    # Pure Pursuit Parameters
+    pure_pursuit:
+      lookahead_distance: 0.6    # Lookahead distance (meters)
+      min_lookahead: 0.3         # Minimum lookahead distance
+      max_lookahead: 1.0         # Maximum lookahead distance
+      lookahead_gain: 1.0        # Gain for velocity-dependent lookahead
+      velocity_scaling: true     # Scale lookahead with velocity
+      
+    # Stanley Controller Parameters
+    stanley:
+      k_e: 0.5                   # Cross-track error gain
+      k_heading: 1.0             # Heading error gain
+      max_steering_angle: 0.5    # Maximum steering angle (radians)
+
+  # Constraint Handling
+  constraints:
+    max_steering_angle: 0.5      # Maximum steering angle (radians)
+    max_angular_velocity: 1.0    # Maximum angular velocity (rad/s)
+    max_linear_velocity: 1.5     # Maximum linear velocity (m/s)
+    min_linear_velocity: 0.05    # Minimum linear velocity (m/s)
+    
+    # Acceleration limits
+    max_linear_accel: 0.5        # Maximum linear acceleration (m/s²)
+    max_angular_accel: 1.0       # Maximum angular acceleration (rad/s²)
+    
+    # Deceleration limits
+    max_linear_decel: 1.0        # Maximum linear deceleration (m/s²)
+    max_angular_decel: 2.0       # Maximum angular deceleration (rad/s²)
+
+  # Error Computation
+  error_computation:
+    cross_track_error:
+      use_lateral_offset: true
+      use_heading_error: true
+      weight_lateral: 1.0
+      weight_heading: 0.5
+    
+    velocity_error:
+      target_velocity_source: "trajectory"  # trajectory or constant
+      constant_velocity: 0.5    # Constant velocity if not from trajectory
+
+  # Trajectory Parameters
+  trajectory:
+    interpolation_distance: 0.1  # Distance between interpolated points (m)
+    smooth_factor: 0.8          # Smoothing factor for spline (0-1)
+    max_curvature: 0.5          # Maximum path curvature (1/meter)
+    
+    # Velocity profile
+    velocity_profile:
+      enable_acceleration_phase: true
+      enable_deceleration_phase: true
+      acceleration_distance: 1.0  # Distance for acceleration ramp (m)
+      deceleration_distance: 0.5  # Distance for deceleration ramp (m)
+
+  # Lookahead Strategy
+  lookahead:
+    method: "time_based"         # time_based or distance_based
+    time_horizon: 1.5            # Time horizon (seconds) for time-based
+    distance_horizon: 0.6        # Distance horizon (m) for distance-based
+    
+    # Adaptive lookahead
+    adaptive: true
+    velocity_gain: 2.0           # Gain for velocity-dependent adaptation
+    curvature_gain: 0.3          # Gain for curvature adaptation
+
+  # Lateral Acceleration Limiting
+  lateral_acceleration:
+    enabled: true
+    max_lateral_accel: 0.5       # Maximum lateral acceleration (m/s²)
+    gain: 0.5                    # Control gain for lateral acceleration
+
+  # Rate Limiting
+  rate_limiting:
+    steering_rate_limit: 0.5     # Steering rate limit (rad/s)
+    velocity_rate_limit: 0.3     # Velocity rate limit (m/s²)
+    
+  # Goal Tolerance
+  goal_tolerance:
+    position_tolerance: 0.1      # Position tolerance (meters)
+    heading_tolerance: 0.1       # Heading tolerance (radians)
+    velocity_tolerance: 0.1      # Velocity tolerance (m/s)
+    timeout: 30.0                # Goal timeout (seconds)
+
+  # Debugging and Monitoring
+  monitoring:
+    publish_errors: true         # Publish error metrics
+    publish_tracking_data: true  # Publish tracking data for visualization
+    log_level: "INFO"            # Log level: DEBUG, INFO, WARN, ERROR
+    
+    # Performance monitoring
+    enable_performance_metrics: true
+    metrics_window_size: 100     # Number of samples for performance calculation
+    
+  # Timeout and Watchdog
+  safety:
+    enable_watchdog: true
+    watchdog_timeout: 2.0        # Watchdog timeout (seconds)
+    on_watchdog_timeout: "stop"  # Action on timeout: stop, hold, or emergency
+    
+    # Safety checks
+    check_control_limits: true
+    check_velocity_limits: true
+    check_acceleration_limits: true
+
+  # Kalman Filter Parameters (for odometry fusion)
+  kalman_filter:
+    process_noise: 0.01          # Process noise covariance
+    measurement_noise: 0.1       # Measurement noise covariance
+    initial_covariance: 0.1      # Initial state covariance
+    
+    # State: [x, y, theta, vx, vy, omega]
+    state_names: [x, y, theta, vx, vy, omega]
+    
+    # Process noise per state
+    process_noise_diagonal: [0.001, 0.001, 0.001, 0.01, 0.01, 0.01]
+    
+    # Measurement noise per output
+    measurement_noise_diagonal: [0.1, 0.1, 0.1]
+
+  # Recovery Behaviors
+  recovery:
+    enable_recovery: true
+    recovery_behaviors:
+      - name: "stop"
+        type: "stop"
+      - name: "backward"
+        type: "backward"
+        distance: 0.5
+      - name: "spin"
+        type: "spin"
+        angle: 1.57
+
+  # Experimental Features
+  experimental:
+    use_model_predictive_control: false
+    use_dynamic_window_approach: false
+    use_velocity_obstacle_method: false
+
+# EOF

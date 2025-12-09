@@ -1,0 +1,26 @@
+# Sample waypoints - square trajectory
+waypoints:
+  - x: 0.0
+    y: 0.0
+    theta: 0.0
+    velocity: 0.5
+  
+  - x: 5.0
+    y: 0.0
+    theta: 0.0
+    velocity: 0.5
+  
+  - x: 5.0
+    y: 5.0
+    theta: 1.57
+    velocity: 0.5
+  
+  - x: 0.0
+    y: 5.0
+    theta: 3.14
+    velocity: 0.5
+  
+  - x: 0.0
+    y: 0.0
+    theta: 0.0
+    velocity: 0.5
