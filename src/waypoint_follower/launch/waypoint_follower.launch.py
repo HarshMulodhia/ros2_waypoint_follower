@@ -51,7 +51,7 @@ def generate_launch_description():
     use_simulator_arg = DeclareLaunchArgument(
         'use_simulator',
         default_value='true',
-        description='Launch professional physics simulator'
+        description='Launch physics simulator'
     )
 
     config_file_arg = DeclareLaunchArgument(
@@ -96,10 +96,10 @@ def generate_launch_description():
 
     # 3. Physics Simulator (differential drive kinematics)
     # Converts /cmd_vel commands to /odom updates
-    professional_simulator = Node(
+    physics_simulator = Node(
         package='waypoint_follower',
-        executable='professional_simulator.py',
-        name='professional_robot_simulator',
+        executable='physics_simulator.py',
+        name='physics_robot_simulator',
         output='screen',
         condition=IfCondition(LaunchConfiguration('use_simulator'))
     )
@@ -143,7 +143,7 @@ def generate_launch_description():
         # Core nodes (in order)
         robot_state_publisher,          # Publish URDF transforms
         static_tf_map_odom,             # Connect map -> odom
-        professional_simulator,         # Physics engine (updates odom -> base_link)
+        physics_simulator,         # Physics engine (updates odom -> base_link)
         waypoint_follower_node,         # Path tracking controller
         rviz_node                       # Visualization
     ])

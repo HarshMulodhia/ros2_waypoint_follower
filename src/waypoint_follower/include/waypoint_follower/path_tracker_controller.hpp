@@ -1,11 +1,3 @@
-/**
- * @file path_tracker_controller.hpp
- * @brief Path tracking controller header
- * @author Autonomous Vehicle Team
- * @date December 2025
- * @version 2.0.1
- */
-
 #pragma once
 
 #include "waypoint_types.hpp"

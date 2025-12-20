@@ -1,8 +1,3 @@
-/**
- * @file waypoint_types.hpp
- * @brief Data structures and utilities for waypoint following
- */
-
 #pragma once
 
 #include <vector>

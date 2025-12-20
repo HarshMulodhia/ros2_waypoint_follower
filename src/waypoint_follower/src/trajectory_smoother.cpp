@@ -162,7 +162,7 @@ std::vector<double> TrajectorySmoother::solve_tridiagonal(
 }
 
 double TrajectorySmoother::cubic_spline_interpolate(double t) {
-    return 0.0;
+    return 0.0*t;
 }
 
 } // namespace waypoint_follower

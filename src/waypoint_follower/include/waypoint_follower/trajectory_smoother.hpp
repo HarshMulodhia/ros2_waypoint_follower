@@ -1,11 +1,3 @@
-/**
- * @file trajectory_smoother.hpp
- * @brief Trajectory smoother header
- * @author Autonomous Vehicle Team
- * @date December 2025
- * @version 2.0.1
- */
-
 #pragma once
 
 #include "waypoint_types.hpp"
