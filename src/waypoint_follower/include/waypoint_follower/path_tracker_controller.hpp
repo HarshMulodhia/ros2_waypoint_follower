@@ -1,42 +1,73 @@
+/**
+ * @file path_tracker_controller.hpp
+ * @brief Path tracking controller header
+ * @author Autonomous Vehicle Team
+ * @date December 2025
+ * @version 2.0.1
+ */
+
 #pragma once
 
 #include "waypoint_types.hpp"
 #include <memory>
-#include <control/pid_controller.hpp>
-#include <control/lqr_controller.hpp>
+#include <Eigen/Dense>
 
 namespace waypoint_follower {
 
-/**
- * @class PathTrackerController
- * @brief Path tracking control using PID and optional LQR
- * @param dt Time step (seconds)
- * @param max_steering Maximum steering angle (radians)
- * @param max_linear_vel Maximum linear velocity (m/s)
- */
 class PathTrackerController {
 public:
-    /// Constructor
+    /**
+     * @brief Constructor
+     * @param dt Time step in seconds
+     * @param max_steering Maximum steering angle
+     * @param max_linear_vel Maximum linear velocity
+     */
     PathTrackerController(double dt, double max_steering, double max_linear_vel);
-    ~PathTrackerController() = default;
 
-    /// Update control command
+    /**
+     * @brief Update control command based on tracking error
+     * @param state Current robot state
+     * @param error Current tracking error
+     * @return Control command (velocity and steering)
+     */
     ControlCommand update(const RobotState& state, const TrackingError& error);
 
-    /// Set steering PID gains
+    /**
+     * @brief Set steering PID gains
+     * @param kp Proportional gain
+     * @param ki Integral gain
+     * @param kd Derivative gain
+     */
     void set_steering_pid_gains(double kp, double ki, double kd);
 
-    /// Set velocity PID gains
+    /**
+     * @brief Set velocity PID gains
+     * @param kp Proportional gain
+     * @param ki Integral gain
+     * @param kd Derivative gain
+     */
     void set_velocity_pid_gains(double kp, double ki, double kd);
 
-    /// Enable/disable LQR
-    void enable_lqr(bool enable) { use_lqr_ = enable; }
-
-    /// Check if LQR enabled
-    bool is_lqr_enabled() const { return use_lqr_; }
-
-    /// Reset controller state
+    /**
+     * @brief Reset controller state
+     */
     void reset();
+
+    /**
+     * @brief Compute lookahead distance based on velocity
+     * @param velocity Current velocity
+     * @return Lookahead distance
+     */
+    double compute_lookahead_distance(double velocity);
+
+    /**
+     * @brief Compute lookahead point on trajectory
+     * @param state Current robot state
+     * @param trajectory Reference trajectory
+     * @return Lookahead point
+     */
+    Eigen::Vector2d compute_lookahead_point(
+        const RobotState& state, const Trajectory& trajectory);
 
 private:
     double dt_;
@@ -44,12 +75,19 @@ private:
     double max_linear_velocity_;
     bool use_lqr_;
 
-    std::unique_ptr<robotics_control::PIDController> steering_pid_;
-    std::unique_ptr<robotics_control::PIDController> velocity_pid_;
-    std::unique_ptr<robotics_control::LQRController> lqr_controller_;
+    // PID controller state variables
+    double steering_integral_;
+    double steering_prev_error_;
+    double velocity_integral_;
+    double velocity_prev_error_;
 
-    double compute_lookahead_distance(double velocity);
-    Eigen::Vector2d compute_lookahead_point(const RobotState& state, const Trajectory& trajectory);
+    // PID gains
+    double steering_kp_;
+    double steering_ki_;
+    double steering_kd_;
+    double velocity_kp_;
+    double velocity_ki_;
+    double velocity_kd_;
 };
 
-}
+} // namespace waypoint_follower

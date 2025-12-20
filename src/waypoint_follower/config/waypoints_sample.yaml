@@ -1,26 +1,43 @@
-# Sample waypoints - square trajectory
+# ==============================================================================
+# Waypoint Configuration - Sample Path
+# ==============================================================================
+# Define a simple rectangular path for testing
+# Format: x (meters), y (meters), velocity (m/s), theta (radians)
+
 waypoints:
+  # Start position - bottom left corner
   - x: 0.0
     y: 0.0
-    theta: 0.0
     velocity: 0.5
+    theta: 0.0
   
-  - x: 5.0
+  # Move right 10 meters
+  - x: 10.0
     y: 0.0
-    theta: 0.0
     velocity: 0.5
+    theta: 0.0
   
-  - x: 5.0
+  # Turn up 5 meters
+  - x: 10.0
     y: 5.0
-    theta: 1.57
     velocity: 0.5
+    theta: 1.5708
   
+  # Move left back to start
   - x: 0.0
     y: 5.0
-    theta: 3.14
     velocity: 0.5
+    theta: 3.14159
   
+  # Return to origin
   - x: 0.0
     y: 0.0
-    theta: 0.0
     velocity: 0.5
+    theta: 4.71239
+
+# Path metadata (optional)
+metadata:
+  name: "Simple Rectangular Path"
+  total_distance: "30.0"  # meters
+  description: "A simple rectangular test path for validation"
+  created: "2025-12-20"

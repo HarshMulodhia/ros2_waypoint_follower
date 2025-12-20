@@ -1,122 +1,110 @@
 cmake_minimum_required(VERSION 3.8)
 project(waypoint_follower)
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
-
-# Set C++ standard
+# C++ Standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
 
 # Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
-find_package(geometry_msgs REQUIRED)
+find_package(nav2_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(visualization_msgs REQUIRED)
-find_package(nav2_msgs REQUIRED)
-find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
-find_package(ament_index_cpp REQUIRED)
-
-# Find robotics_control library
+find_package(Eigen3 REQUIRED)
 find_package(robotics_control REQUIRED)
 
 # Include directories
-include_directories(
-  include
-  ${EIGEN3_INCLUDE_DIR}
+include_directories(include)
+
+# Define dependencies
+set(WAYPOINT_FOLLOWER_DEPS
+    rclcpp
+    rclcpp_action
+    nav2_msgs
+    nav_msgs
+    sensor_msgs
+    geometry_msgs
+    std_msgs
+    robotics_control
 )
 
-# Generate header with installed default waypoints path so the node can
-# use an absolute installed path as the default parameter value.
-set(WAYPOINTS_DEFAULT_PATH "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/config/waypoints_sample.yaml")
-set(WAYPOINTS_DEFAULT_PATH_ESCAPED "\"${WAYPOINTS_DEFAULT_PATH}\"")
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/config/waypoints_default_path.hpp.in
-  ${CMAKE_CURRENT_BINARY_DIR}/generated/waypoints_default_path.hpp
-  @ONLY
+# Build library
+add_library(waypoint_follower_lib SHARED
+    src/waypoint_loader.cpp
+    src/path_tracker_controller.cpp
+    src/odometry_fusion.cpp
+    src/trajectory_smoother.cpp
 )
 
-
-# Add library for waypoint_follower components
-add_library(waypoint_follower_lib
-  src/waypoint_follower_node.cpp
-  src/path_tracker_controller.cpp
-  src/odometry_fusion.cpp
-  src/waypoint_loader.cpp
-  src/trajectory_smoother.cpp
+target_include_directories(waypoint_follower_lib PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 
-# Make generated header available to targets
-target_include_directories(waypoint_follower_lib PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated)
+ament_target_dependencies(waypoint_follower_lib ${WAYPOINT_FOLLOWER_DEPS})
+target_link_libraries(waypoint_follower_lib yaml-cpp Eigen3::Eigen)
 
-# Link waypoint_follower_lib with dependencies
-target_link_libraries(waypoint_follower_lib
-  robotics_control::robotics_control
-  yaml-cpp
+# Build executable
+add_executable(waypoint_follower_node
+    src/waypoint_follower_node.cpp
+    src/waypoint_follower_node_main.cpp
 )
 
-ament_target_dependencies(waypoint_follower_lib
-  rclcpp
-  rclcpp_action
-  geometry_msgs
-  nav_msgs
-  sensor_msgs
-  std_msgs
-  visualization_msgs
-  nav2_msgs
-  ament_index_cpp
+target_include_directories(waypoint_follower_node PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
-# Add executable
-add_executable(waypoint_follower_node 
-  src/waypoint_follower_node_main.cpp
+ament_target_dependencies(waypoint_follower_node ${WAYPOINT_FOLLOWER_DEPS})
+target_link_libraries(waypoint_follower_node waypoint_follower_lib yaml-cpp Eigen3::Eigen)
+
+# Install library
+install(TARGETS waypoint_follower_lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
 )
 
-# Target dependencies
-ament_target_dependencies(waypoint_follower_node
-  rclcpp
-  rclcpp_action
-  geometry_msgs
-  nav_msgs
-  sensor_msgs
-  std_msgs
-  visualization_msgs
-  nav2_msgs
-  ament_index_cpp
-)
-
-# Link robotics_control library and waypoint_follower_lib
-target_link_libraries(waypoint_follower_node
-  waypoint_follower_lib
-  robotics_control::robotics_control
-)
-
-# Installation
+# Install executable
 install(TARGETS waypoint_follower_node
-  DESTINATION lib/${PROJECT_NAME}
+    RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
+# Install headers
 install(DIRECTORY include/
-  DESTINATION include
+    DESTINATION include
 )
 
-# Install config, launch and rviz assets so runtime can find them via package share
-install(DIRECTORY config/
-  DESTINATION share/${PROJECT_NAME}/config
-)
-
+# Install launch files
 install(DIRECTORY launch/
-  DESTINATION share/${PROJECT_NAME}/launch
+    DESTINATION share/${PROJECT_NAME}/launch
 )
 
-install(DIRECTORY rviz/
-  DESTINATION share/${PROJECT_NAME}/rviz
+# Install configuration files
+install(DIRECTORY config/
+    DESTINATION share/${PROJECT_NAME}/config
 )
+
+# Install rviz config
+install(DIRECTORY rviz/
+    DESTINATION share/${PROJECT_NAME}/rviz
+)
+
+# Testing
+if(BUILD_TESTING)
+    find_package(ament_cmake_gtest REQUIRED)
+    ament_add_gtest(test_waypoint_loader test/test_waypoint_loader.cpp)
+    target_link_libraries(test_waypoint_loader waypoint_follower_lib)
+    ament_add_gtest(test_path_tracker test/test_path_tracker.cpp)
+    target_link_libraries(test_path_tracker waypoint_follower_lib)
+    ament_add_gtest(test_odometry_fusion test/test_odometry_fusion.cpp)
+    target_link_libraries(test_odometry_fusion waypoint_follower_lib)
+    ament_add_gtest(test_trajectory_smoother test/test_trajectory_smoother.cpp)
+    target_link_libraries(test_trajectory_smoother waypoint_follower_lib)
+endif()
 
 ament_package()

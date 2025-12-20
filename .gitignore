@@ -1,0 +1,54 @@
+# ROS2 Build Artifacts
+build/
+install/
+log/
+*.o
+*.a
+*.so
+*.so.*
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.make
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Test Results
+test_results/
+*.xml
+*.log
+
+# Temporary Files
+*.tmp
+*.bak
+.colcon_ignore
+
+# Build Directories (keep src only)
+build/*
+install/*
+log/*
+
+# Environment Files
+.env
+.env.local
+
+# OS-specific
+.DS_Store
+Thumbs.db
