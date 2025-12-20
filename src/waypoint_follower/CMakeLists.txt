@@ -82,7 +82,7 @@ install(DIRECTORY include/
 
 # Make Python scripts executable and install them
 install(PROGRAMS
-    scripts/professional_simulator.py
+    scripts/physics_simulator.py
     DESTINATION lib/${PROJECT_NAME}
 )
 
