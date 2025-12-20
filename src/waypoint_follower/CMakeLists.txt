@@ -18,6 +18,7 @@ find_package(std_msgs REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(robotics_control REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 
 # Include directories
 include_directories(include)
@@ -77,6 +78,12 @@ install(TARGETS waypoint_follower_node
 # Install headers
 install(DIRECTORY include/
     DESTINATION include
+)
+
+# Make Python scripts executable and install them
+install(PROGRAMS
+    scripts/professional_simulator.py
+    DESTINATION lib/${PROJECT_NAME}
 )
 
 # Install launch files

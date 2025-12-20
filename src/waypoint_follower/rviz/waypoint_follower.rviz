@@ -6,8 +6,10 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /RobotModel1
+        - /TF1
       Splitter Ratio: 0.5
-    Tree Height: 775
+    Tree Height: 549
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -15,19 +17,18 @@ Panels:
       - /2D Goal Pose1
       - /Publish Point1
     Name: Tool Properties
-    Splitter Ratio: 0.588679
+    Splitter Ratio: 0.5833333134651184
   - Class: rviz_common/Views
     Expanded:
       - /Current View1
     Name: Views
     Splitter Ratio: 0.5
-
 Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 1.0
-      Class: rviz_common/Grid
+      Cell Size: 1
+      Class: rviz_default_plugins/Grid
       Color: 160; 160; 164
       Enabled: true
       Line Style:
@@ -36,137 +37,97 @@ Visualization Manager:
       Name: Grid
       Normal Cell Count: 0
       Offset:
-        X: 0.0
-        Y: 0.0
-        Z: 0.0
+        X: 0
+        Y: 0
+        Z: 0
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    
-    - Alpha: 1.0
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10.0
-        Min Value: -10.0
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz_common/LaserScan
-      Enabled: false
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Min Color: 0; 0; 0
-      Name: LaserScan
-      Position Tolerance: 0.10000000149011612
-      Queue Size: 1
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.009999999776482582
-      Style: Flat Squares
-      Topic:
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Description Source: Topic
+      Description Topic:
         Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /scan
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: false
-    
-    - Alpha: 1.0
-      Class: rviz_common/RobotModel
-      Collision Alpha: 0.0
+        Durability: Volatile
+        History: KeepLast
+        Reliability: Reliable
+        Value: /robot_description
       Enabled: true
-      Links:
-        All Links Enabled: true
-        Expanded:
-          - /base_link
-        Link Tree Style: Links in Alphabetic Order
       Name: RobotModel
-      Robot Description: robot_description
-      TF Prefix: ""
-      Update Interval: 0.0
-      Value: true
       Visual Enabled: true
-    
-    - Alpha: 1.0
-      Buffer Length: 1
-      Class: rviz_common/TF
+    - Class: rviz_default_plugins/TF
       Enabled: true
-      Frame Timeout: 15.0
+      Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_link:
-          Value: true
-        map:
-          Value: true
-        odom:
-          Value: true
-      Marker Scale: 1.0
+      Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
-      Tree:
-        map:
-          odom:
-            base_link:
-              {}
-      Update Interval: 0.0
-      Value: true
-    
-    - Alpha: 0.7
-      Class: rviz_common/Path
+    - Class: rviz_default_plugins/Path
       Color: 25; 255; 0
       Enabled: true
-      Head Length: 0.20000000298023224
-      Head Radius: 0.05000000074505806
+      Head Diameter: 0.30000001192092896
+      head Length: 0.20000000298023224
       Length: 0.30000001192092896
       Line Style: Lines
       Line Width: 0.029999999329447746
       Name: Planned Path
       Offset:
-        X: 0.0
-        Y: 0.0
-        Z: 0.0
+        X: 0
+        Y: 0
+        Z: 0
       Pose Color: 255; 85; 255
       Pose Style: None
       Radius: 0.029999999329447746
-      Shaft Length: 0.20000000298023224
-      Shaft Radius: 0.009999999776482582
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
       Topic:
         Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
+        Durability: Volatile
+        History: KeepLast
+        Reliability: Reliable
         Value: /path_visualization
       Value: true
-    
-    - Alpha: 0.5
-      Class: rviz_common/Odometry
-      Color Space: Default
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz_default_plugins/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
       Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Value: 1.0
-      Min Color: 0; 0; 0
-      Min Value: 0.0
+      Keep: 100
       Name: Odometry
       Position Tolerance: 0.10000000149011612
-      Queue Size: 1
-      Reference Frame: odom
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 25; 0
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 0.10000000149011612
+        Shaft Radius: 0.05000000074505806
+        Type: Arrow
       Topic:
         Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
+        Durability: Volatile
+        History: KeepLast
+        Reliability: Reliable
         Value: /odometry/fused
-      Use Fixed Frame: true
-      Use rainbow: true
       Value: true
   Enabled: true
   Global Options:
@@ -175,65 +136,55 @@ Visualization Manager:
     Frame Rate: 30
   Name: root
   Tools:
-    - Class: rviz_common/Interact
+    - Class: rviz_default_plugins/Interact
       Hide Inactive Objects: true
-    - Class: rviz_common/MoveCamera
-    - Class: rviz_common/Select
-    - Class: rviz_common/FocusCamera
-    - Class: rviz_common/Measure
-      Class Name: rviz_common/Measure
-    - Class: rviz_ros_plugin/PublishPoint
-      Single click publishing: true
-      Topic: /clicked_point
-    - Class: rviz_common/SetInitialPose
-      Theta std deviation: 0.2617993950843811
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+    - Class: rviz_default_plugins/SetInitialPose
       Topic:
         Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
+        Durability: Volatile
+        History: KeepLast
+        Reliability: Reliable
         Value: /initialpose
-      X std deviation: 0.5
-      Y std deviation: 0.5
-    - Class: rviz_common/SetGoal
+    - Class: rviz_default_plugins/SetGoal
       Topic:
         Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
+        Durability: Volatile
+        History: KeepLast
+        Reliability: Reliable
         Value: /goal_pose
+    - Class: rviz_default_plugins/PublishPoint
+      Single click: true
+      Topic:
+        Depth: 5
+        Durability: Volatile
+        History: KeepLast
+        Reliability: Reliable
+        Value: /clicked_point
   Value: true
   Views:
     Current:
-      Class: rviz_common/Orbit
-      Distance: 30.0
+      Class: rviz_default_plugins/Orbit
+      Distance: 10
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
-        Stereo Focal Distance: 1.0
+        Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 5.0
-        Y: 2.5
-        Z: 0.0
+        X: 0
+        Y: 0
+        Z: 0
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8203790783882141
+      Pitch: 0.785398006439209
       Target Frame: <Fixed Frame>
-      Yaw: 0.7853981633974483
-    Saved Views: {}
-Window Geometry:
-  Displays:
-    collapsed: false
-  Height: 1016
-  Hide Left Dock: false
-  Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000016a0000036afc0200040afb0000100d0047006f0061006c0054006f006f006c00000000000000019f0000000000000000fb0100000c0000024f0000027afc0100000002fc00000000000001e4000000fa0100001afc010000024f000002e50000019a00fffffffc0200000001fc0000004f0000000000ffffffff0100000001fa000000040200000002fb0000001e0054006f006f006c00200050007200 6f0070006500720074006900650073AwAAAAH9AAAAAA0000000fb0000001200530065006c0065006300740069006f006e00000000000000008700000000000000000fb0000001200530065006c0065006300740069006f006e010000005b000002e5000000000000000000000003000003ea000000a4fc0100000001fb0000000800540069006d0065010000000000000003ea000000000000000000000540000036a00000004000000040fa00000000020000000200fb0000000a0049006d006100670065010000000000000138000000000000000ffb0000000a0049006d006100670065010000016500000138000000000000000000000540000036a0000000
-Width: 1850
-X: 70
-Y: 27
+      Value: Orbit (rviz)
+      Yaw: 0.785398006439209
+    Saved: ~

@@ -1,13 +1,8 @@
-/**
- * @file waypoint_follower_params.yaml
- * @brief ROS2 parameter configuration for Waypoint Follower
- * @author Autonomous Vehicle Team
- * @date December 2025
- * @version 2.0.1
- * 
- * ALIGNED WITH waypoint_follower_node implementation
- * All parameter names match the actual node code
- */
+# ========================================================================
+# ROS2 Parameter Configuration for Waypoint Follower
+# ========================================================================
+# ALIGNED WITH waypoint_follower_node implementation
+# All parameter names match the actual node code
 
 waypoint_follower_node:
   ros__parameters:
