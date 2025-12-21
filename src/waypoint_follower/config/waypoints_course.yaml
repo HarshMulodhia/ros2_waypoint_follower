@@ -1,137 +1,385 @@
-# Reference Waypoints for Professional Demonstration
-# ===================================================
-# A carefully designed course that demonstrates:
-# - Linear path tracking (straightness test)
-# - Smooth turning (curvature control)
-# - High-speed navigation
-# - Complex maneuvers
+################################################################################
 #
-# All positions are in the MAP frame (meters)
-# All orientations are Euler angles converted to quaternions (w, x, y, z)
+# AUTONOMOUS WAYPOINT FOLLOWER - PROFESSIONAL COURSE DEFINITION
+#
+# File: waypoints_course.yaml
+# Purpose: Define the navigation course for the autonomous waypoint follower
+#
+# Course Description:
+#   - Square perimeter test (2m x 2m)
+#   - Straight-line segment tracking validation
+#   - 90-degree turn execution and accuracy
+#   - Full-cycle return to start position
+#   - Complete loop demonstrates all critical control capabilities
+#
+# Coordinate Frame: MAP (meters)
+# Robot Base: base_link at center of wheel axle
+# Velocity Units: m/s
+# Angle Units: radians
+#
+# Professional Notes:
+#   - Each waypoint is reached when distance < goal_tolerance_distance (0.1m)
+#   - Robot heading must align within goal_tolerance_angle (0.2 rad ≈ 11.5°)
+#   - Velocity is interpolated between waypoints via trajectory smoother
+#   - Curvature limited to max_trajectory_curvature (0.5 1/m)
+#   - All waypoints use absolute positioning in map frame
+#
+################################################################################
 
+# Main waypoint list for the autonomous course
 waypoints:
-  # ========== WARM-UP: STRAIGHT LINE TEST ==========
-  # Goal: Demonstrate straight-line tracking accuracy
-  # Expected: Robot follows a perfectly straight line
-  - name: "Start Position"
-    position: {x: 0.0, y: 0.0, z: 0.0}
-    orientation: {w: 1.0, x: 0.0, y: 0.0, z: 0.0}  # 0° (facing +X)
-    description: "Starting position at origin"
-  
-  - name: "Straight Line Point 1"
-    position: {x: 2.0, y: 0.0, z: 0.0}
-    orientation: {w: 1.0, x: 0.0, y: 0.0, z: 0.0}
-    description: "Move 2m straight forward"
-  
-  # ========== TURN 90° LEFT ==========
-  - name: "Left Turn Start"
-    position: {x: 2.0, y: 0.0, z: 0.0}
-    orientation: {w: 0.7071, x: 0.0, y: 0.0, z: 0.7071}  # 90° (facing +Y)
-    description: "Rotate 90° counterclockwise"
-  
-  - name: "Left Turn End"
-    position: {x: 2.0, y: 2.0, z: 0.0}
-    orientation: {w: 0.7071, x: 0.0, y: 0.0, z: 0.7071}
-    description: "Move 2m forward (now facing +Y)"
-  
-  # ========== TURN 90° LEFT AGAIN ==========
-  - name: "Second Left Turn"
-    position: {x: 2.0, y: 2.0, z: 0.0}
-    orientation: {w: 0.0, x: 0.0, y: 0.0, z: 1.0}  # 180° (facing -X)
-    description: "Rotate 90° counterclockwise again"
-  
-  - name: "Back Side Movement"
-    position: {x: 0.0, y: 2.0, z: 0.0}
-    orientation: {w: 0.0, x: 0.0, y: 0.0, z: 1.0}
-    description: "Move 2m forward (now facing -X)"
-  
-  # ========== TURN 90° LEFT (FINAL) ==========
-  - name: "Final Left Turn"
-    position: {x: 0.0, y: 2.0, z: 0.0}
-    orientation: {w: -0.7071, x: 0.0, y: 0.0, z: 0.7071}  # 270° (facing -Y)
-    description: "Rotate 90° counterclockwise (final)"
-  
-  - name: "Return to Origin"
-    position: {x: 0.0, y: 0.0, z: 0.0}
-    orientation: {w: 1.0, x: 0.0, y: 0.0, z: 0.0}  # Back to 0°
-    description: "Complete the square and return to start"
 
-# ========== ALTERNATIVE: CIRCULAR COURSE ==========
-# Uncomment below for circular path demonstration
+  # ============================================================================
+  # SEGMENT 1: INITIALIZATION & STRAIGHT-LINE TEST (East Direction)
+  # ============================================================================
+  # Purpose: Validate straight-line tracking accuracy
+  # Expected: Robot maintains zero lateral deviation from path
+  # Distance: 2.0 meters
+  # Heading: 0° (East, +X direction)
+  # Time estimate: ~4 seconds at 0.5 m/s
+  
+  - x: 0.0
+    y: 0.0
+    theta: 0.0
+    velocity: 0.5
+    # START POSITION: Origin with heading toward positive X-axis
 
+  - x: 2.0
+    y: 0.0
+    theta: 0.0
+    velocity: 0.5
+    # WAYPOINT 1: 2m east on X-axis
+    # Expected error: <0.05m lateral, <0.1rad heading deviation
+    # Validates: Straight-line tracking precision
+
+  # ============================================================================
+  # SEGMENT 2: FIRST TURN (Left 90° from East to North)
+  # ============================================================================
+  # Purpose: Validate smooth curve execution and heading control
+  # Turn angle: 90° counterclockwise (π/2 radians)
+  # Radius of curvature: ~0.5m (depends on speed and control gains)
+  # Heading: π/2 radians (North, +Y direction)
+  # Time estimate: ~3 seconds with controlled turning
+
+  - x: 2.0
+    y: 1.0
+    theta: 1.5708
+    velocity: 0.5
+    # WAYPOINT 2: Midpoint of turn (1m north of first waypoint)
+    # Validates: Smooth curve initiation
+
+  - x: 2.0
+    y: 2.0
+    theta: 1.5708
+    velocity: 0.5
+    # WAYPOINT 3: Complete first 90° turn
+    # Robot now faces North (+Y direction)
+    # Expected: Heading within ±0.1 rad of π/2
+
+  # ============================================================================
+  # SEGMENT 3: SECOND TURN (Left 90° from North to West)
+  # ============================================================================
+  # Purpose: Validate consistent turning performance
+  # Turn angle: 90° counterclockwise (π/2 radians)
+  # Heading: π radians (West, -X direction)
+  # Time estimate: ~3 seconds
+
+  - x: 1.0
+    y: 2.0
+    theta: 3.1416
+    velocity: 0.5
+    # WAYPOINT 4: Midpoint of second turn
+    # Validates: Repeatable curve execution
+
+  - x: 0.0
+    y: 2.0
+    theta: 3.1416
+    velocity: 0.5
+    # WAYPOINT 5: Complete second 90° turn
+    # Robot now faces West (-X direction)
+    # Expected: Cross-track error <0.05m throughout turn
+
+  # ============================================================================
+  # SEGMENT 4: THIRD TURN (Left 90° from West to South)
+  # ============================================================================
+  # Purpose: Validate negative X-axis straight-line tracking
+  # Turn angle: 90° counterclockwise (π/2 radians)
+  # Heading: -π/2 or 3π/2 radians (South, -Y direction)
+  # Time estimate: ~3 seconds
+
+  - x: 0.0
+    y: 1.0
+    theta: -1.5708
+    velocity: 0.5
+    # WAYPOINT 6: Midpoint of third turn
+    # Heading transitions to South
+    # Validates: Heading normalization to [-π, π] range
+
+  - x: 0.0
+    y: 0.0
+    theta: 0.0
+    velocity: 0.5
+    # WAYPOINT 7: RETURN TO ORIGIN
+    # Complete 360° loop closed
+    # Robot returns to starting position and orientation
+    # Total course distance: ~8.0 meters
+    # Total expected time: ~16 seconds at 0.5 m/s nominal speed
+
+
+################################################################################
+#
+# ALTERNATIVE COURSE DEFINITIONS
+# ============================================================================
+# These alternative courses can be used for different testing scenarios.
+# To use, replace the main 'waypoints:' section with one of these options.
+#
+################################################################################
+
+# ============================================================================
+# OPTION 1: CIRCULAR COURSE (2m radius)
+# ============================================================================
+# Purpose: Test smooth circular path following
+# Total distance: ~12.6m (full circle perimeter)
+# Radius: 2m
+# Uses: Sine/cosine waypoint positioning
+#
+# UNCOMMENT TO USE:
+#
 # waypoints:
-#   - name: "Start"
-#     position: {x: 0.0, y: 0.0, z: 0.0}
-#     orientation: {w: 1.0, x: 0.0, y: 0.0, z: 0.0}
 #
-#   - name: "Circle Point 1"
-#     position: {x: 1.4, y: 1.4, z: 0.0}
-#     orientation: {w: 0.9239, x: 0.0, y: 0.0, z: 0.3827}  # 45°
+#   - x: 0.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.5
 #
-#   - name: "Circle Point 2"
-#     position: {x: 0.0, y: 2.0, z: 0.0}
-#     orientation: {w: 0.7071, x: 0.0, y: 0.0, z: 0.7071}  # 90°
+#   - x: 1.41
+#     y: 1.41
+#     theta: 0.7854
+#     velocity: 0.5
 #
-#   - name: "Circle Point 3"
-#     position: {x: -1.4, y: 1.4, z: 0.0}
-#     orientation: {w: 0.3827, x: 0.0, y: 0.0, z: 0.9239}  # 135°
+#   - x: 2.0
+#     y: 0.0
+#     theta: 1.5708
+#     velocity: 0.5
 #
-#   - name: "Circle Point 4"
-#     position: {x: -2.0, y: 0.0, z: 0.0}
-#     orientation: {w: 0.0, x: 0.0, y: 0.0, z: 1.0}  # 180°
+#   - x: 1.41
+#     y: -1.41
+#     theta: 2.3562
+#     velocity: 0.5
 #
-#   - name: "Circle Point 5"
-#     position: {x: -1.4, y: -1.4, z: 0.0}
-#     orientation: {w: -0.3827, x: 0.0, y: 0.0, z: 0.9239}  # 225°
+#   - x: 0.0
+#     y: -2.0
+#     theta: 3.1416
+#     velocity: 0.5
 #
-#   - name: "Circle Point 6"
-#     position: {x: 0.0, y: -2.0, z: 0.0}
-#     orientation: {w: -0.7071, x: 0.0, y: 0.0, z: 0.7071}  # 270°
+#   - x: -1.41
+#     y: -1.41
+#     theta: -2.3562
+#     velocity: 0.5
 #
-#   - name: "Circle Point 7"
-#     position: {x: 1.4, y: -1.4, z: 0.0}
-#     orientation: {w: -0.9239, x: 0.0, y: 0.0, z: 0.3827}  # 315°
+#   - x: -2.0
+#     y: 0.0
+#     theta: -1.5708
+#     velocity: 0.5
 #
-#   - name: "Return to Start"
-#     position: {x: 0.0, y: 0.0, z: 0.0}
-#     orientation: {w: 1.0, x: 0.0, y: 0.0, z: 0.0}  # 0°
+#   - x: -1.41
+#     y: 1.41
+#     theta: -0.7854
+#     velocity: 0.5
+#
+#   - x: 0.0
+#     y: 2.0
+#     theta: 0.0
+#     velocity: 0.5
+#
+#   - x: 0.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.5
 
-# ========== ALTERNATIVE: FIGURE-8 COURSE ==========
-# Uncomment below for figure-8 demonstration
-
+# ============================================================================
+# OPTION 2: FIGURE-8 COURSE (Two-lobe infinity pattern)
+# ============================================================================
+# Purpose: Test complex path with center crossing
+# Total distance: ~16.0m
+# Features: Figure-8 shape, curvature reversal at center
+#
+# UNCOMMENT TO USE:
+#
 # waypoints:
-#   - name: "Start"
-#     position: {x: 0.0, y: 0.0, z: 0.0}
-#     orientation: {w: 1.0, x: 0.0, y: 0.0, z: 0.0}
 #
-#   - name: "Lobe 1 Top"
-#     position: {x: 1.0, y: 1.0, z: 0.0}
-#     orientation: {w: 0.7071, x: 0.0, y: 0.0, z: 0.7071}
+#   - x: 0.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.5
 #
-#   - name: "Lobe 1 Right"
-#     position: {x: 2.0, y: 0.0, z: 0.0}
-#     orientation: {w: 1.0, x: 0.0, y: 0.0, z: 0.0}
+#   - x: 0.7
+#     y: 0.7
+#     theta: 0.7854
+#     velocity: 0.5
 #
-#   - name: "Lobe 1 Bottom"
-#     position: {x: 1.0, y: -1.0, z: 0.0}
-#     orientation: {w: -0.7071, x: 0.0, y: 0.0, z: 0.7071}
+#   - x: 1.5
+#     y: 0.0
+#     theta: 1.5708
+#     velocity: 0.5
 #
-#   - name: "Center Crossing"
-#     position: {x: 0.0, y: 0.0, z: 0.0}
-#     orientation: {w: 1.0, x: 0.0, y: 0.0, z: 0.0}
+#   - x: 0.7
+#     y: -0.7
+#     theta: -0.7854
+#     velocity: 0.5
 #
-#   - name: "Lobe 2 Top"
-#     position: {x: -1.0, y: 1.0, z: 0.0}
-#     orientation: {w: 0.7071, x: 0.0, y: 0.0, z: 0.7071}
+#   - x: 0.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.5
 #
-#   - name: "Lobe 2 Left"
-#     position: {x: -2.0, y: 0.0, z: 0.0}
-#     orientation: {w: 0.0, x: 0.0, y: 0.0, z: 1.0}
+#   - x: -0.7
+#     y: 0.7
+#     theta: 2.3562
+#     velocity: 0.5
 #
-#   - name: "Lobe 2 Bottom"
-#     position: {x: -1.0, y: -1.0, z: 0.0}
-#     orientation: {w: -0.7071, x: 0.0, y: 0.0, z: 0.7071}
+#   - x: -1.5
+#     y: 0.0
+#     theta: 1.5708
+#     velocity: 0.5
 #
-#   - name: "Return Home"
-#     position: {x: 0.0, y: 0.0, z: 0.0}
-#     orientation: {w: 1.0, x: 0.0, y: 0.0, z: 0.0}
+#   - x: -0.7
+#     y: -0.7
+#     theta: -2.3562
+#     velocity: 0.5
+#
+#   - x: 0.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.5
+
+# ============================================================================
+# OPTION 3: STRAIGHT-LINE DISTANCE TEST (20m segment)
+# ============================================================================
+# Purpose: Validate long-distance straight-line stability
+# Total distance: 20.0 meters
+# Perfect test for odometry drift and control stability
+#
+# UNCOMMENT TO USE:
+#
+# waypoints:
+#
+#   - x: 0.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.5
+#
+#   - x: 5.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.5
+#
+#   - x: 10.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.5
+#
+#   - x: 15.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.5
+#
+#   - x: 20.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.5
+
+# ============================================================================
+# OPTION 4: SPIRAL COURSE (Outward spiral from origin)
+# ============================================================================
+# Purpose: Test variable velocity and increasing curvature
+# Total distance: ~25m
+# Features: Gradually increasing radius, constant angular velocity
+#
+# UNCOMMENT TO USE:
+#
+# waypoints:
+#
+#   - x: 0.0
+#     y: 0.0
+#     theta: 0.0
+#     velocity: 0.3
+#
+#   - x: 0.5
+#     y: 0.5
+#     theta: 0.7854
+#     velocity: 0.4
+#
+#   - x: 0.0
+#     y: 1.0
+#     theta: 1.5708
+#     velocity: 0.4
+#
+#   - x: -1.0
+#     y: 0.5
+#     theta: 2.3562
+#     velocity: 0.45
+#
+#   - x: -0.5
+#     y: -1.0
+#     theta: -2.3562
+#     velocity: 0.45
+#
+#   - x: 1.5
+#     y: -0.5
+#     theta: -0.7854
+#     velocity: 0.5
+#
+#   - x: 1.0
+#     y: 1.5
+#     theta: 0.7854
+#     velocity: 0.5
+
+################################################################################
+#
+# PARAMETER REFERENCE FOR COURSE DESIGN
+#
+################################################################################
+#
+# FIELD DEFINITIONS:
+#   x (float): X position in MAP frame (meters)
+#              Range: -∞ to +∞ (practical: -100m to 100m)
+#              Typical: -10m to 10m for test environments
+#
+#   y (float): Y position in MAP frame (meters)
+#              Range: -∞ to +∞ (practical: -100m to 100m)
+#              Typical: -10m to 10m for test environments
+#
+#   theta (float): Desired heading at waypoint (radians)
+#                  Range: [-π, π] recommended (normalized in code)
+#                  Common values:
+#                    0.0    = 0°   (East, +X direction)
+#                    1.5708 = 90°  (North, +Y direction)
+#                    3.1416 = 180° (West, -X direction)
+#                   -1.5708 = -90° (South, -Y direction)
+#
+#   velocity (float): Desired velocity at waypoint (m/s)
+#                     Range: 0.1 to 1.5 m/s (from config limits)
+#                     Typical for testing: 0.5 m/s
+#                     Note: Robot hardware max = 1.5 m/s
+#                           Controller safety limit = max_linear_velocity
+#
+# QUALITY METRICS:
+#   - Goal tolerance distance: 0.1m (10cm)
+#   - Goal tolerance angle: 0.2 rad (~11.5°)
+#   - Minimum velocity: 0.1 m/s
+#   - Maximum velocity: 1.5 m/s
+#   - Max steering angle: 0.5 rad (28.6°)
+#   - Max curvature: 0.5 1/m
+#
+# WAYPOINT SPACING RECOMMENDATIONS:
+#   - Minimum: 0.2m (for tight turns)
+#   - Typical: 0.5m to 2.0m (for smooth paths)
+#   - Maximum: 5.0m (for long straight segments)
+#
+# TURN ANGLE RECOMMENDATIONS:
+#   - Sharp turns: 45° or less per segment
+#   - Standard turns: 90° with intermediate waypoint (smooth arc)
+#   - Smooth curves: Subdivide into 10-15° segments
+#
+################################################################################

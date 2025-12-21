@@ -1,0 +1,51 @@
+OPTION 1: CIRCULAR COURSE (2m radius)
+ros2 action send_goal /follow_waypoints nav2_msgs/action/FollowWaypoints \
+'{"poses":[
+  {"pose":{"position":{"x":0.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":1.41,"y":1.41,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":2.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":1.41,"y":-1.41,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":0.0,"y":-2.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":-1.41,"y":-1.41,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":-2.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":-1.41,"y":1.41,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":0.0,"y":2.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":0.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}}
+],"goal_index":0,"number_of_loops":0}'
+
+OPTION 2: FIGURE-8 COURSE (Two-lobe infinity pattern)
+ros2 action send_goal /follow_waypoints nav2_msgs/action/FollowWaypoints \
+'{"poses":[
+  {"pose":{"position":{"x":0.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":7,"y":7,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":15,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":7,"y":-7,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":0.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":-7,"y":7,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":-15,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":-7,"y":-7,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":0.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}}
+],"goal_index":0,"number_of_loops":0}'
+
+
+OPTION 3: STRAIGHT-LINE DISTANCE TEST (20m segment)
+ros2 action send_goal /follow_waypoints nav2_msgs/action/FollowWaypoints \
+'{"poses":[
+  {"pose":{"position":{"x":0.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":5.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":10.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":15.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":20.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}}
+],"goal_index":0,"number_of_loops":0}'
+
+# OPTION 4: SPIRAL COURSE (Outward spiral from origin)
+ros2 action send_goal /follow_waypoints nav2_msgs/action/FollowWaypoints \
+'{"poses":[
+  {"pose":{"position":{"x":0.0,"y":0.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":0.5,"y":0.5,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":0.0,"y":1.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":-1.0,"y":0.5,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":-0.5,"y":-1.0,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":1.5,"y":-0.5,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}},
+  {"pose":{"position":{"x":1.0,"y":1.5,"z":0.0},"orientation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0}}}
+],"goal_index":0,"number_of_loops":0}'

@@ -1,25 +1,38 @@
+#!/usr/bin/env python3
+
+"""
+Professional ROS 2 Waypoint Follower Launch System
+Fully integrated with robot_state_publisher and TF broadcasting
+Launches:
+- robot_state_publisher (URDF → TF transforms)
+- Static TF publishers (coordinate frame hierarchy)
+- Physics simulator (differential drive kinematics)
+- Waypoint follower node (path tracking controller)
+- RViz2 visualization
+"""
+
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.substitutions import LaunchConfiguration
 from launch.conditions import IfCondition
 from launch_ros.actions import Node
+
 
 def generate_launch_description():
     """
     Launch Configuration
     ==================================
     Launches the complete Waypoint Follower system with physics simulation.
-    
     Includes:
-    - Robot URDF with all links
+    - Robot URDF with all links and joints
     - Physics-based simulator (differential drive kinematics)
     - Static TF publishers (coordinate frame connections)
-    - RViz visualization
-    - Waypoint follower node
+    - RViz visualization with professional configuration
+    - Waypoint follower node for autonomous navigation
     """
-    
+
     # Get package share directory
     pkg_share = get_package_share_directory('waypoint_follower')
 
@@ -28,14 +41,13 @@ def generate_launch_description():
     config_file = os.path.join(pkg_share, 'config', 'waypoint_follower_params.yaml')
     waypoints_file = os.path.join(pkg_share, 'config', 'waypoints_course.yaml')
     rviz_config = os.path.join(pkg_share, 'rviz', 'waypoint_follower.rviz')
-    simulator_script = os.path.join(pkg_share, '..', '..', 'src', 'waypoint_follower', 'scripts', 'physics_simulator.py')
 
     # Read robot URDF
     with open(robot_urdf_file, 'r') as f:
         robot_description = f.read()
 
     # ========== DECLARE LAUNCH ARGUMENTS ==========
-    
+
     use_sim_time_arg = DeclareLaunchArgument(
         'use_sim_time',
         default_value='false',
@@ -68,7 +80,7 @@ def generate_launch_description():
 
     # ========== NODES ==========
 
-    # 1. Robot State Publisher (URDF -> TF transforms)
+    # 1. CRITICAL: Robot State Publisher (URDF -> TF transforms for wheels & sensors)
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -80,8 +92,19 @@ def generate_launch_description():
         ]
     )
 
+    joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        output='screen',
+        parameters=[
+            {'robot_description': robot_description},
+            {'use_sim_time': LaunchConfiguration('use_sim_time')}
+        ]
+    )
+
     # 2. Static TF Publishers (coordinate frame hierarchy)
-    # map -> odom (localization frame)
+    # map -> odom (localization frame connection)
     static_tf_map_odom = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
@@ -104,7 +127,7 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('use_simulator'))
     )
 
-    # 4. Waypoint Follower Node (main control)
+    # 4. Waypoint Follower Node (main control logic)
     waypoint_follower_node = Node(
         package='waypoint_follower',
         executable='waypoint_follower_node',
@@ -112,10 +135,8 @@ def generate_launch_description():
         output='screen',
         parameters=[
             LaunchConfiguration('config_file'),
-            {
-                'use_sim_time': LaunchConfiguration('use_sim_time'),
-                'waypoints_file': LaunchConfiguration('waypoints_file')
-            }
+            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+            {'waypoints_file': LaunchConfiguration('waypoints_file')}
         ]
     )
 
@@ -130,20 +151,28 @@ def generate_launch_description():
     )
 
     # ========== BUILD LAUNCH DESCRIPTION ==========
-    # Order matters: robot_state_publisher must be first to provide URDF
-    
+
+    # Order matters: robot_state_publisher must be first to provide URDF transforms
+    # Static TF ensures map frame exists before physics simulator starts
     return LaunchDescription([
-        # Arguments
+        # Launch arguments
         use_sim_time_arg,
         use_rviz_arg,
         use_simulator_arg,
         config_file_arg,
         waypoints_file_arg,
-        
-        # Core nodes (in order)
-        robot_state_publisher,          # Publish URDF transforms
-        static_tf_map_odom,             # Connect map -> odom
-        physics_simulator,         # Physics engine (updates odom -> base_link)
-        waypoint_follower_node,         # Path tracking controller
-        rviz_node                       # Visualization
+
+        # Informational messages
+        LogInfo(msg="🚀 Launching ROS 2 Waypoint Follower System..."),
+        LogInfo(msg="📦 TF Tree: map → odom → base_link → [wheels, sensors]"),
+
+        # Core nodes (in critical order)
+        robot_state_publisher,  # CRITICAL: Publishes URDF transforms (base_link → wheels)
+        joint_state_publisher,  # Joint state publisher for dynamic transforms
+        static_tf_map_odom,     # Ensures map → odom connection exists
+        physics_simulator,      # Physics engine (updates odom → base_link)
+        waypoint_follower_node, # Path tracking controller
+        rviz_node,             # Visualization
+
+        LogInfo(msg="✅ System ready! Check RViz for robot visualization."),
     ])

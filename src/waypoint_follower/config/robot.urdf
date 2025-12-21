@@ -112,6 +112,7 @@
       <origin xyz="0 0 0" rpy="1.5708 0 0"/>
     </collision>
 
+    <!-- Tread pattern visual (decorative) -->
     <visual>
       <geometry>
         <cylinder radius="0.16" length="0.096"/>
@@ -196,7 +197,7 @@
   </link>
 
   <!-- ========== JOINTS: DRIVE WHEELS ========== -->
-  <!-- Left Wheel Joint -->
+  <!-- Left Wheel Joint - Connects base_link to left_wheel -->
   <joint name="left_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="left_wheel"/>
@@ -206,7 +207,7 @@
     <dynamics damping="0.7" friction="0.0"/>
   </joint>
 
-  <!-- Right Wheel Joint -->
+  <!-- Right Wheel Joint - Connects base_link to right_wheel -->
   <joint name="right_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel"/>
@@ -216,56 +217,65 @@
     <dynamics damping="0.7" friction="0.0"/>
   </joint>
 
-  <!-- ========== JOINT: CASTER WHEEL ========== -->
+  <!-- ========== JOINTS: CASTER WHEEL ========== -->
+  <!-- Caster Wheel Joint - Front support wheel (fixed/ball joint) -->
   <joint name="caster_wheel_joint" type="fixed">
     <parent link="base_link"/>
     <child link="caster_wheel"/>
-    <origin xyz="0.33 0 -0.13" rpy="0 0 0"/>
+    <origin xyz="0.35 0 -0.17" rpy="0 0 0"/>
   </joint>
 
   <!-- ========== JOINTS: SENSORS ========== -->
-  <!-- IMU Joint -->
+  <!-- IMU Joint - Mounted at center of base_link -->
   <joint name="imu_joint" type="fixed">
     <parent link="base_link"/>
     <child link="imu_link"/>
-    <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
-  <!-- Laser Joint (Top of robot for good coverage) -->
+  <!-- Laser Scanner Joint - Top-mounted sensor -->
   <joint name="laser_joint" type="fixed">
     <parent link="base_link"/>
     <child link="laser_link"/>
-    <origin xyz="0.3 0 0.25" rpy="0 0 0"/>
+    <origin xyz="0 0 0.25" rpy="0 0 0"/>
   </joint>
 
-  <!-- Camera Joint -->
+  <!-- Camera Joint - Front-mounted depth camera -->
   <joint name="camera_joint" type="fixed">
     <parent link="base_link"/>
     <child link="camera_link"/>
-    <origin xyz="0.325 0 0.2" rpy="0 0 0"/>
+    <origin xyz="0.4 0 0.1" rpy="0 0.2 0"/>
   </joint>
 
-  <!-- ========== MATERIALS DEFINITION ========== -->
+  <!-- ========== MATERIAL DEFINITIONS ========== -->
+  <!-- Reusable material definitions for all components -->
+  
+  <!-- Blue chassis color -->
   <material name="chassis_blue">
     <color rgba="0.05 0.25 0.85 1.0"/>
   </material>
   
-  <material name="accent_orange">
-    <color rgba="0.95 0.6 0.2 0.8"/>
-  </material>
-  
+  <!-- Dark wheel color -->
   <material name="wheel_dark">
     <color rgba="0.1 0.1 0.1 1.0"/>
   </material>
   
+  <!-- Tread texture -->
   <material name="tread_texture">
     <color rgba="0.2 0.2 0.2 1.0"/>
   </material>
   
+  <!-- Orange accent color -->
+  <material name="accent_orange">
+    <color rgba="0.95 0.6 0.2 0.8"/>
+  </material>
+  
+  <!-- Caster wheel color -->
   <material name="caster_silver">
     <color rgba="0.7 0.7 0.7 1.0"/>
   </material>
   
+  <!-- Sensor colors -->
   <material name="sensor_red">
     <color rgba="1.0 0.15 0.15 1.0"/>
   </material>

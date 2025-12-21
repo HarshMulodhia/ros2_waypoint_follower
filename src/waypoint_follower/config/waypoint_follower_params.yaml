@@ -1,215 +1,117 @@
-# ========================================================================
-# ROS2 Parameter Configuration for Waypoint Follower
-# ========================================================================
-# ALIGNED WITH waypoint_follower_node implementation
-# All parameter names match the actual node code
+################################################################################
+# Autonomous Waypoint Follower - Configuration Parameters
+#
+# File: waypoint_follower_params.yaml
+# Purpose: Centralized parameter configuration for all system components
+# Robot: Differential drive, 0.8m x 0.5m, 12kg
+# Target Speed: 0.3 m/s (safe indoor operation)
+#
+# Last Updated: December 21, 2025
+################################################################################
 
 waypoint_follower_node:
   ros__parameters:
-    # ========================================================================
-    # Node Configuration
-    # ========================================================================
-    
-    # Enable detailed logging for debugging
+    # ============================================================================
+    # DEBUG & LOGGING
+    # ============================================================================
     enable_debug_logging: false
-    
-    # ROS QoS profile for publishers/subscribers
-    qos_history_depth: 10
-    qos_reliability: "RELIABLE"  # RELIABLE or BEST_EFFORT
-    
-    # ========================================================================
-    # Path Tracking Parameters
-    # ========================================================================
-    
-    # Control loop update rate (Hz)
-    control_loop_rate: 50.0
-    
-    # Time step for controllers (seconds) - derived from rate
-    dt: 0.02
-    
-    # Maximum steering angle (radians) - ±28.6°
-    max_steering_angle: 0.5
-    
-    # Maximum linear velocity (m/s)
-    max_linear_velocity: 1.5
-    
-    # ========================================================================
-    # Steering PID Controller Gains
-    # ========================================================================
-    
-    # Proportional gain for steering (rad / m of cross-track error)
-    steering_kp: 1.0
-    
-    # Integral gain for steering (rad / (m*s))
-    steering_ki: 0.1
-    
-    # Derivative gain for steering (rad*s / m)
-    steering_kd: 0.5
-    
-    # Integral accumulation limit (rad) - anti-windup protection
-    steering_integral_limit: 0.5
-    
-    # ========================================================================
-    # Velocity PID Controller Gains
-    # ========================================================================
-    
-    # Proportional gain for velocity (m/s per m/s error)
-    velocity_kp: 0.5
-    
-    # Integral gain for velocity (m/s per (m/s*s))
-    velocity_ki: 0.05
-    
-    # Derivative gain for velocity (s)
-    velocity_kd: 0.1
-    
-    # Integral accumulation limit (m/s) - anti-windup protection
-    velocity_integral_limit: 0.5
-    
-    # ========================================================================
-    # Trajectory Smoothing Parameters
-    # ========================================================================
-    
-    # Maximum allowed curvature (1/m) - limits sharp turns
-    trajectory_max_curvature: 0.5
-    
-    # Interpolation distance between trajectory points (m)
-    trajectory_interpolation_distance: 0.1
-    
-    # ========================================================================
-    # Lookahead Control Parameters
-    # ========================================================================
-    
-    # Minimum lookahead distance (m)
-    lookahead_distance_min: 0.5
-    
-    # Maximum lookahead distance (m)
-    lookahead_distance_max: 2.0
-    
-    # Velocity scaling factor for dynamic lookahead
-    # lookahead = min(max_dist, min_dist + velocity * scaling_factor)
-    lookahead_velocity_scaling: 1.0
-    
-    # ========================================================================
-    # Goal Achievement Parameters
-    # ========================================================================
-    
-    # Distance to goal for "reached" condition (m)
-    goal_tolerance_distance: 0.1
-    
-    # Heading angle tolerance to goal (rad)
-    goal_tolerance_angle: 0.2
-    
-    # Timeout before declaring goal unreachable (seconds)
-    goal_timeout: 60.0
-    
-    # ========================================================================
-    # Odometry Fusion Parameters
-    # ========================================================================
-    
-    # Process noise covariance for Kalman filter
-    # Higher = less trust in motion model, more trust in measurements
-    odometry_process_noise: 0.01
-    
-    # Measurement noise covariance
-    # Higher = less trust in sensor measurements, more trust in model
-    odometry_measurement_noise: 0.05
-    
-    # ========================================================================
-    # Safety Parameters
-    # ========================================================================
-    
-    # Maximum acceleration magnitude (m/s²)
-    max_acceleration: 0.5
-    
-    # Emergency stop if velocity error exceeds threshold (m/s)
-    velocity_error_threshold: 0.5
-    
-    # Timeout for losing odometry feedback (seconds)
-    odometry_timeout: 2.0
-    
-    # Timeout for losing IMU feedback (seconds)
-    imu_timeout: 2.0
-    
-    # Enable emergency stop on measurement timeout
-    enable_emergency_stop: true
-    
-    # ========================================================================
-    # Sensor-Specific Parameters
-    # ========================================================================
-    
-    # Odometry source topic
-    odom_topic: "/odometry/filtered"
-    
-    # IMU data topic
-    imu_topic: "/imu"
-    
-    # Velocity command output topic
-    cmd_vel_topic: "/cmd_vel"
-    
-    # Fused odometry output topic
-    fused_odom_topic: "/odometry/fused"
-    
-    # Trajectory visualization topic
-    path_viz_topic: "/path_visualization"
-    
-    # ========================================================================
-    # File Paths & Resources
-    # ========================================================================
-    
-    # Default waypoints file (YAML format)
-    # Can be overridden by launch argument
-    waypoints_file: "config/waypoints_default.yaml"
-    
-    # Robot URDF description parameter
-    robot_description_param: "robot_description"
-    
-    # ========================================================================
-    # Frame Names (TF2)
-    # ========================================================================
-    
-    # Global/map frame
-    global_frame: "map"
-    
-    # Odometry frame
-    odom_frame: "odom"
-    
-    # Robot base frame
-    base_frame: "base_link"
-    
-    # Sensor frame (for visualization)
-    sensor_frame: "sensor_link"
-    
-    # ========================================================================
-    # Advanced/Experimental Parameters
-    # ========================================================================
-    
-    # Enable LQR controller (if implemented)
-    enable_lqr: false
-    
-    # Use adaptive gains based on velocity
-    enable_adaptive_gains: false
-    
-    # Enable path smoothing post-processing
-    enable_path_smoothing: true
-    
-    # Enable curvature-based velocity scaling
-    enable_curvature_scaling: true
-    
-    # Minimum speed (m/s) - prevent stopping
-    min_velocity: 0.1
-    
-    # ========================================================================
-    # Logging & Diagnostics
-    # ========================================================================
-    
-    # Log period for periodic diagnostics (seconds)
+    loglevel: "INFO"  # DEBUG, INFO, WARN, ERROR
     log_period: 5.0
-    
-    # Enable performance timing logs
-    enable_timing_logs: false
-    
-    # Enable detailed state logs (high volume)
-    enable_state_logs: false
-    
-    # ROS log level: DEBUG, INFO, WARN, ERROR
-    log_level: "INFO"
+
+    # ============================================================================
+    # QOS SETTINGS
+    # ============================================================================
+    qos:
+      history_depth: 10
+      reliability: "RELIABLE"  # RELIABLE or BEST_EFFORT
+
+    # ============================================================================
+    # CONTROL LOOP CONFIGURATION
+    # ============================================================================
+    control_loop_rate: 50.0  # Hz (20ms period)
+    dt: 0.02  # Time step in seconds (derived from rate)
+
+    # ============================================================================
+    # SPEED & STEERING CONSTRAINTS (TUNED FOR 0.3 m/s)
+    # ============================================================================
+    max_steering_angle: 0.5  # radians (≈28.6°) - yaw rate limit
+    max_linear_velocity: 0.3  # m/s - hard cap for safety
+    min_velocity: 0.05  # m/s - minimum speed to prevent stopping
+
+    max_acceleration: 0.2  # m/s² - for smooth acceleration
+    velocity_error_threshold: 0.5  # m/s - emergency stop threshold
+
+    # ============================================================================
+    # STEERING PID CONTROLLER (Cross-track error correction)
+    # ============================================================================
+    steering_kp: 1.0  # Proportional gain
+    steering_ki: 0.1  # Integral gain
+    steering_kd: 0.5  # Derivative gain
+    steering_integral_limit: 0.5  # Anti-windup protection (rad)
+
+    # ============================================================================
+    # VELOCITY PID CONTROLLER (Speed regulation)
+    # ============================================================================
+    velocity_kp: 0.5  # Proportional gain
+    velocity_ki: 0.05  # Integral gain
+    velocity_kd: 0.1  # Derivative gain
+    velocity_integral_limit: 0.5  # Anti-windup protection (m/s)
+
+    # ============================================================================
+    # TRAJECTORY SMOOTHER PARAMETERS
+    # ============================================================================
+    trajectory_max_curvature: 1.5  # 1/m (allows ~0.67m radius turns)
+    trajectory_interpolation_distance: 0.1  # m (distance between points)
+
+    # ============================================================================
+    # PATH TRACKING PARAMETERS
+    # ============================================================================
+    lookahead_distance_min: 0.3  # m
+    lookahead_distance_max: 0.9  # m
+    lookahead_velocity_scaling: 1.0  # scaling factor
+
+    # ============================================================================
+    # GOAL TOLERANCE & TIMEOUT
+    # ============================================================================
+    goal_tolerance_distance: 0.1  # m (10cm)
+    goal_tolerance_angle: 0.2  # rad (≈11.5°)
+    goal_timeout: 60.0  # seconds before declaring unreachable
+
+    # ============================================================================
+    # SENSOR FUSION (ODOMETRY + IMU)
+    # ============================================================================
+    odometry_process_noise: 0.01  # Higher = less trust in motion model
+    odometry_measurement_noise: 0.05  # Higher = less trust in sensors
+    odometry_timeout: 2.0  # seconds before watchdog triggers
+    imu_timeout: 2.0  # seconds before watchdog triggers
+
+    # ============================================================================
+    # SAFETY FEATURES
+    # ============================================================================
+    enable_emergency_stop: true
+    enable_curvature_scaling: true
+    enable_adaptive_gains: false
+    enable_path_smoothing: true
+
+    # ============================================================================
+    # TOPICS & FRAMES
+    # ============================================================================
+    odom_topic: "odometry/filtered"
+    imu_topic: "imu/data"
+    cmd_vel_topic: "cmd_vel"
+    fused_odom_topic: "odometry/fused"
+    path_viz_topic: "path_visualization"
+
+    global_frame: "map"
+    odom_frame: "odom"
+    base_frame: "base_link"
+
+    # ============================================================================
+    # WAYPOINT FILE
+    # ============================================================================
+    waypoints_file: "config/waypoints_course.yaml"  # Can be overridden by launch args
+
+    # ============================================================================
+    # ROBOT URDF
+    # ============================================================================
+    robot_description_param: "robot_description"
