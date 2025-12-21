@@ -1,7 +1,44 @@
 #!/usr/bin/env python3
-"""
-Physics-based robot simulator for waypoint follower
-Converts cmd_vel commands to odometry updates using differential drive kinematics
+"""!
+@file physics_simulator.py
+@brief Physics-based robot simulator for testing
+@author Harsh Mulodhia
+@version 1.0.0
+
+@class PhysicsSimulator
+@brief Simulates differential-drive robot dynamics
+
+Simulates complete robot physics:
+    - Kinematic model with instantaneous center of rotation (ICR)
+    - Velocity saturation to prevent unrealistic speeds
+    - TF broadcasting for robot pose
+    - Odometry publishing at 100 Hz
+
+**Differential Drive Model:**
+    - Two independently controlled wheels
+    - Wheel base: 0.5 m (configurable)
+    - Wheel radius: 0.1 m (configurable)
+
+**Circular Motion (|ω| > 0.001):**
+@code
+radius = v / ω
+Rotate robot around instantaneous center by ω*dt
+@endcode
+
+**Straight Motion:**
+@code
+x += v * cos(θ) * dt
+y += v * sin(θ) * dt
+@endcode
+
+Useful for:
+    - Development without real hardware
+    - Algorithm validation and tuning
+    - Integration testing
+    - Benchmarking performance
+
+@note Publishers: /odom, TF broadcasts
+@note Subscribers: /cmd_vel
 """
 
 import rclpy
@@ -18,6 +55,13 @@ class PhysicsSimulator(Node):
     """Simulates robot physics and publishes odometry"""
     
     def __init__(self):
+        """!
+        Initialize simulator node
+        Subscribes to: /cmd_vel (geometry_msgs/Twist)
+        Publishes: /odom (nav_msgs/Odometry)
+        Broadcasts: TF /odom → /base_link
+        Update rate: 100 Hz (0.01s)
+        """
         super().__init__('physics_robot_simulator')
         
         # Robot parameters
@@ -49,7 +93,11 @@ class PhysicsSimulator(Node):
         self.get_logger().info('Physics simulator started')
     
     def cmd_vel_callback(self, msg: Twist):
-        """Receive velocity commands and store them"""
+        """!
+        Receive velocity commands
+        @param msg geometry_msgs/Twist with linear.x and angular.z
+        @effects Saturates velocities to max limits
+        """
         self.linear_vel = msg.linear.x
         self.angular_vel = msg.angular.z
         
@@ -60,7 +108,19 @@ class PhysicsSimulator(Node):
                               min(self.angular_vel, self.max_angular_vel))
     
     def simulation_step(self):
-        """Execute one simulation step"""
+        """!
+        Physics simulation step
+        Algorithm for differential drive:
+            IF |ω| > 0.001:  # Curved motion
+                radius = v_linear / ω
+                icr_x = x - radius * sin(θ)
+                icr_y = y + radius * cos(θ)
+                Δθ = ω * dt
+                Rotate [x,y] around ICR by Δθ
+            ELSE:  # Straight line
+                x += v_linear * cos(θ) * dt
+                y += v_linear * sin(θ) * dt
+        """
         # Get time delta
         current_time = self.get_clock().now()
         dt = (current_time - self.last_update_time).nanoseconds / 1e9
@@ -107,7 +167,12 @@ class PhysicsSimulator(Node):
         self.publish_transform(current_time)
     
     def publish_odometry(self, timestamp):
-        """Publish odometry message"""
+        """!
+        /**
+        Publish odometry message
+        @note Odometry covariance set to zero (perfect simulation)
+            In real systems, set appropriate covariance values
+        """
         odom = Odometry()
         odom.header.frame_id = 'odom'
         odom.header.stamp = timestamp.to_msg()
@@ -136,7 +201,10 @@ class PhysicsSimulator(Node):
         self.odom_pub.publish(odom)
     
     def publish_transform(self, timestamp):
-        """Publish odom -> base_link transform"""
+        """!
+        Broadcast odom → base_link transformation
+        @note At 100 Hz for low-latency TF lookups
+        """
         t = TransformStamped()
         t.header.stamp = timestamp.to_msg()
         t.header.frame_id = 'odom'

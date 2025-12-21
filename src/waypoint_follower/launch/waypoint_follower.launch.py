@@ -1,14 +1,51 @@
 #!/usr/bin/env python3
 
-"""
-Professional ROS 2 Waypoint Follower Launch System
-Fully integrated with robot_state_publisher and TF broadcasting
-Launches:
-- robot_state_publisher (URDF → TF transforms)
-- Static TF publishers (coordinate frame hierarchy)
-- Physics simulator (differential drive kinematics)
-- Waypoint follower node (path tracking controller)
-- RViz2 visualization
+"""!
+@file waypoint_follower.launch.py
+@brief ROS 2 launch configuration for complete system
+@author Harsh Mulodhia
+@version 1.0.0
+
+Launches integrated waypoint following system with:
+    - Robot state publisher (URDF transforms)
+    - Physics simulator (optional)
+    - Waypoint follower node (main controller)
+    - RViz visualization (optional)
+
+**Launch Arguments:**
+
+    - use_sim_time (default: false)
+        - Enable simulation time for Gazebo/rosbag compatibility
+
+    - use_rviz (default: true)
+        - Enable RViz visualization of robot and path
+
+    - use_simulator (default: true)
+        - Enable physics_simulator for testing without hardware
+
+    - config_file (default: waypoint_follower_params.yaml)
+        - Path to controller parameters file
+
+    - waypoints_file (default: waypoints_course.yaml)
+        - Path to waypoints definition file
+
+**TF Hierarchy Established:**
+@code
+map
+└── odom (static, identity transform)
+     └── base_link
+          ├── wheels
+          └── sensors
+@endcode
+
+**Node Startup Order:**
+1. robot_state_publisher (must be first for URDF)
+2. joint_state_publisher
+3. static_transform_publisher (map→odom)
+4. physics_robot_simulator
+5. waypoint_follower_node
+6. rviz2
+
 """
 
 import os

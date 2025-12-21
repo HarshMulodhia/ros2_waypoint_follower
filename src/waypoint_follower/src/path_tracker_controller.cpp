@@ -40,6 +40,7 @@ PathTrackerController::PathTrackerController(double dt, double max_steering,
 
 ControlCommand PathTrackerController::update(const RobotState &state,
                                              const TrackingError &error) {
+  (void)state;
   ControlCommand cmd;
   cmd.linear_velocity = 0.0;
   cmd.lateral_velocity = 0.0;
@@ -47,6 +48,8 @@ ControlCommand PathTrackerController::update(const RobotState &state,
 
   // Use velocity from state for lookahead computation
   double lookahead_dist = compute_lookahead_distance(state.vx);
+
+  (void) lookahead_dist;
 
   // Use steering PID for cross-track error
   cmd.angular_velocity =

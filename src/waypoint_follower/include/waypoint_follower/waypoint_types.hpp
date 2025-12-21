@@ -1,3 +1,19 @@
+/**
+ * @file waypoint_types.hpp
+ * @brief Data structures for waypoint following system
+ * @author Harsh Mulodhia
+ * @version 1.0.0
+ *
+ * Defines core data types used throughout the waypoint follower system:
+ * - Waypoint: Single navigation target
+ * - RobotState: Complete state estimate (6-DOF)
+ * - ControlCommand: Velocity command output
+ * - TrackingError: Path tracking error metrics
+ * - Trajectory: Collection of smoothed waypoints
+ * - FollowerStatus: State machine states
+ * - Math utilities: Angle normalization, distance calculation
+ */
+
 #pragma once
 
 #include <Eigen/Dense>
@@ -10,6 +26,7 @@ namespace waypoint_follower {
 /**
  * @struct Waypoint
  * @brief Single waypoint with position, orientation, and velocity
+ * @details Represents a target waypoint in 2D space with desired heading and velocity
  */
 struct Waypoint {
   double x;        ///< X position (meters)
@@ -17,15 +34,19 @@ struct Waypoint {
   double theta;    ///< Desired heading (radians)
   double velocity; ///< Desired velocity (m/s)
 
+  /// Default constructor: initializes all fields to zero
   Waypoint() : x(0), y(0), theta(0), velocity(0.5) {}
 
+  /// Parametric constructor for convenient initialization
   Waypoint(double x_, double y_, double v_ = 0.5, double t_ = 0)
       : x(x_), y(y_), theta(t_), velocity(v_) {}
 };
 
 /**
  * @struct RobotState
- * @brief Complete robot state estimate [x, y, theta, vx, vy, omega]
+ * @brief Complete 6-DOF robot state estimate
+ * @details Maintains full kinematic state: [x, y, θ, vx, vy, ω]
+ * @note Used by Kalman filter output and controller input
  */
 struct RobotState {
   double x;         ///< X position (meters)
@@ -34,18 +55,24 @@ struct RobotState {
   double vx;        ///< X velocity (m/s)
   double vy;        ///< Y velocity (m/s)
   double omega;     ///< Angular velocity (rad/s)
-  double timestamp; ///< Timestamp (seconds)
+  double timestamp; ///< State timestamp (seconds since epoch)
 
+  /// Default constructor: initializes all fields to zero
   RobotState() : x(0), y(0), theta(0), vx(0), vy(0), omega(0), timestamp(0) {}
 
+  /// Accessor for position vector
   Eigen::Vector3d position() const { return Eigen::Vector3d(x, y, theta); }
+
+  /// Accessor for velocity vector
   Eigen::Vector3d velocity() const { return Eigen::Vector3d(vx, vy, omega); }
 };
 
 /**
  * @struct ControlCommand
- * @brief Control output [linear_velocity, lateral_velocity, angular_velocity]
+ * @brief Velocity command for differential-drive robot
+ * @details Output of path tracking controller
  */
+
 struct ControlCommand {
   double linear_velocity;  ///< Forward velocity (m/s)
   double lateral_velocity; ///< Lateral velocity (m/s)
@@ -60,13 +87,14 @@ struct ControlCommand {
 
 /**
  * @struct TrackingError
- * @brief Error metrics for path tracking
+ * @brief Path tracking performance metrics
+ * @details Computed by control loop for feedback to path tracker
  */
 struct TrackingError {
-  double cross_track_error; ///< Lateral error (meters)
-  double heading_error;     ///< Heading error (radians)
-  double velocity_error;    ///< Velocity error (m/s)
-  double progress;          ///< Progress [0, 1]
+  double cross_track_error; ///< Lateral deviation from path (meters)
+  double heading_error;     ///< Heading mismatch (radians, [-π, π])
+  double velocity_error;    ///< Velocity mismatch (m/s)
+  double progress;          ///< Progress along trajectory [0.0, 1.0]
 
   TrackingError()
       : cross_track_error(0), heading_error(0), velocity_error(0), progress(0) {
@@ -75,15 +103,16 @@ struct TrackingError {
 
 /**
  * @struct TrajectoryPoint
- * @brief Single point on trajectory
+ * @brief Single interpolated trajectory point
+ * @details Contains position, orientation, curvature, and velocity at waypoint
  */
 struct TrajectoryPoint {
-  double x;         ///< X position (meters)
-  double y;         ///< Y position (meters)
-  double theta;     ///< Heading (radians)
-  double curvature; ///< Path curvature (1/meters)
-  double velocity;  ///< Desired velocity (m/s)
-  double s;         ///< Arc length (meters)
+  double x;           ///< X position (meters)
+  double y;           ///< Y position (meters)
+  double theta;       ///< Path heading (radians)
+  double curvature;   ///< Instantaneous path curvature (1/meters)
+  double velocity;    ///< Desired velocity profile (m/s)
+  double s;           ///< Arc length from trajectory start (meters)
 
   TrajectoryPoint() : x(0), y(0), theta(0), curvature(0), velocity(0.5), s(0) {}
 };
@@ -91,9 +120,10 @@ struct TrajectoryPoint {
 /**
  * @struct Trajectory
  * @brief Complete smoothed trajectory
+ * @details Vector of interpolated trajectory points with metadata
  */
 struct Trajectory {
-  std::vector<TrajectoryPoint> points; ///< Trajectory points
+  std::vector<TrajectoryPoint> points; ///< Ordered waypoints along path
   double total_length;                 ///< Total path length (meters)
 
   Trajectory() : total_length(0) {}

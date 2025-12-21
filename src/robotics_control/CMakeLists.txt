@@ -5,6 +5,8 @@ project(robotics_control VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 
 # Find ament_cmake for ROS2
 find_package(ament_cmake REQUIRED)
